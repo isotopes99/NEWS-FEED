@@ -308,6 +308,15 @@ def generate_outputs(news_data, gd_topics):
                 f.write(f"- {badge}**{art['title']}** (*{art['source']}*) - [Read]({art['link']})\n")
             f.write("\n")
 
+    # Pre-build navigation buttons outside f-string for Python 3.11 compatibility
+    nav_buttons_list = []
+    for i, cat in enumerate(news_data.keys()):
+        short_label = html.escape(cat.split()[0] + " " + cat.split()[1])
+        nav_buttons_list.append(
+            f'<button class="tab-btn" onclick="filterCategory(\'sec-{i}\', this)">{short_label}</button>'
+        )
+    nav_buttons_html = "".join(nav_buttons_list)
+
     # 2. Write Mobile-First Progressive Web App (index.html)
     html_out = f"""<!DOCTYPE html>
 <html lang="en">
@@ -368,7 +377,7 @@ def generate_outputs(news_data, gd_topics):
         <div class="nav">
             <button class="tab-btn active" onclick="filterCategory('all', this)">All Sections</button>
             <button class="tab-btn gd-pill" onclick="filterCategory('sec-gd', this)">🎙️ GD Topics ({len(gd_topics)})</button>
-            {"".join([f'<button class="tab-btn" onclick="filterCategory(\'sec-{i}\', this)">{html.escape(cat.split()[0] + " " + cat.split()[1])}</button>' for i, cat in enumerate(news_data.keys())])}
+            {nav_buttons_html}
         </div>
     </div>
 
